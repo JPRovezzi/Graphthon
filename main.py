@@ -71,53 +71,54 @@ colors = ['blue', 'green', 'red']
 plt.figure(figsize=(12, 6))
 
 for index,values in enumerate(arrays):
-    values = values / (0.089/0.1)
-    # Expand each value by adding one before (value - 0.03) and one after (value + 0.03)
-    expanded_values = []
-    for v in values:
-        expanded_values.extend([v - 0.03, v, v + 0.03])
-    values = np.array(expanded_values)
-    
-    time_real = time + time_error[index]
+    if index in [2]:
+        values = values / (0.089/0.1)
+        # Expand each value by adding one before (value - 0.03) and one after (value + 0.03)
+        expanded_values = []
+        for v in values:
+            expanded_values.extend([v - 0.03, v, v + 0.03])
+        values = np.array(expanded_values)
+        
+        time_real = time + time_error[index]
 
-    # Agrupar los datos en listas para cada tiempo
-    grouped_values = [values[i*9:(i+1)*9] for i in range(len(time))]
+        # Agrupar los datos en listas para cada tiempo
+        grouped_values = [values[i*9:(i+1)*9] for i in range(len(time))]
 
 
 
 
-    plt.boxplot(
-        grouped_values,
-        positions=time_real,
-        widths=10,
-        showfliers=False,
-        notch=False,
-        patch_artist=False,
-        boxprops=dict(
-            # facecolor='gray', 
-            color=colors[index],),
-        medianprops=dict(color=colors[index],),
-        whiskerprops=dict(color=colors[index],),
-        capprops=dict(color=colors[index],),
-        whis=[0, 100],
-        label=labels[index],
-        )
+        plt.boxplot(
+            grouped_values,
+            positions=time_real,
+            widths=10,
+            showfliers=False,
+            notch=False,
+            patch_artist=False,
+            boxprops=dict(
+                # facecolor='gray', 
+                color=colors[index],),
+            medianprops=dict(color=colors[index],),
+            whiskerprops=dict(color=colors[index],),
+            capprops=dict(color=colors[index],),
+            whis=[0, 100],
+            label=labels[index],
+            )
 
-    # Agregar puntos individuales de cada muestra
-    #for i, t in enumerate(time):
-        #plt.scatter([t]*3, grouped_values[i], color='black', alpha=0.7)
+        # Agregar puntos individuales de cada muestra
+        #for i, t in enumerate(time):
+            #plt.scatter([t]*3, grouped_values[i], color='black', alpha=0.7)
 
-    # Agregar una linea que conecte las medianas de cada grupo
-    if False:
-        medians = [np.median(group) for group in grouped_values]
-        plt.plot(
-            time_real,
-            medians,
-            color='gray',
-            marker='o',
-            linestyle='dotted',
-            markersize=1,
-            label='Medianas')
+        # Agregar una linea que conecte las medianas de cada grupo
+        if False:
+            medians = [np.median(group) for group in grouped_values]
+            plt.plot(
+                time_real,
+                medians,
+                color='gray',
+                marker='o',
+                linestyle='dotted',
+                markersize=1,
+                label='Medianas')
 
 
 # Ajustes finales
