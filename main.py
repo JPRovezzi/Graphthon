@@ -64,11 +64,14 @@ time_error = [
     np.array([-0,0,0,1,2,1,0,2,0,2,-1,0,0])
     ]
 
+labels = ['80ºC', '70ºC', '60ºC']
+
 colors = ['blue', 'green', 'red']
 # Crear la figura
 plt.figure(figsize=(12, 6))
 
 for index,values in enumerate(arrays):
+    values = values / (0.089/0.1)
     # Expand each value by adding one before (value - 0.03) and one after (value + 0.03)
     expanded_values = []
     for v in values:
@@ -97,6 +100,7 @@ for index,values in enumerate(arrays):
         whiskerprops=dict(color=colors[index],),
         capprops=dict(color=colors[index],),
         whis=[0, 100],
+        label=labels[index],
         )
 
     # Agregar puntos individuales de cada muestra
@@ -125,10 +129,10 @@ plt.xticks(ticks=time,labels=time, rotation=45)  # Asegurar escala correcta del 
 plt.ylabel('Volumen de titulación (ml)')
 plt.ylim(0.80, 4)  # Set y-axis limits
 #plt.yticks(np.linspace(0.80, 4.00, 17))
-plt.yticks(np.linspace(0.80, 4.60, 20))
+plt.yticks(np.linspace(0.80, 5, 22))
 
-plt.title('Volumen de titulación con NaOH 0,01M en función del tiempo de reacción a 80ºC \n para alicuotas de 100 uL del sistema Butanol, Ácido octanoico y PTSA·H2O')
-#plt.legend()
+plt.title('Volumen de titulación con NaOH 0,1M en función del tiempo de reacción \n para alicuotas de 100 uL del sistema Butanol, Ácido octanoico y PTSA·H2O')
+plt.legend()
 
 plt.grid(True)
 # Gráfico de cajas con posiciones correctas en eje X
