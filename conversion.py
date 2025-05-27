@@ -476,11 +476,13 @@ for index,values in enumerate(tiritation):
     if index in [0,1,3]:
         # Expand each value by adding one before (value - 0.03) and one after (value + 0.03)
         expanded_values = []
+        NaOH = 0.1
+        alicuota=0.1
         for v in values:
             expanded_values.extend([v - 0.03, v, v + 0.03])
         values = np.array(expanded_values)
         # Ajusto los valores de titulación a la concentración del NaOH como si fuera 0.1M
-        values = values / (0.089/0.1)
+        #values = values / (0.089/0.1)
         
         # Multiplico el volumen de titulación por la concentración del NaOH para obtener los equivalentes cada 100 microlitros.
         #values = values * 0.1  # Ajustar a la concentración del NaOH (0.1M)

@@ -75,14 +75,17 @@ for index,values in enumerate(tiritation):
     if index in [0,1,3]:
         
         expanded_values = []
+        NaOH = 0.1
+        alicuota=0.1
+
         # Expand each value by adding one before (value - 0.03) and one after (value + 0.03)
         for v in values:
             expanded_values.extend([v - 0.03, v, v + 0.03])
         values = np.array(expanded_values)
         # Multiplico el volumen de titulación por la concentración del NaOH para obtener los equivalentes cada 100 microlitros.
-        values = values * 0.089 
+        values = values * (NaOH/1000) 
 
-        values = values * 10  # Convertir a equivalentes por ml
+        values = values / alicuota    # Convertir a equivalentes por ml
         
         # Multiplico por el volumen total
         total_volume = system.total_mass / mixture_density[index] # Volumen total de la mezcla en ml a la temperatura dada
@@ -91,8 +94,8 @@ for index,values in enumerate(tiritation):
         values = values * total_volume 
 
         
-        eq_butanol = 10*0.089*system.volume_alcohol*0.110
-        eq_PTSA = 10*0.089*system.volume_alcohol*(0.753-0.110)
+        eq_butanol = (NaOH/1000)*(system.volume_alcohol/alicuota)*0.110
+        eq_PTSA = (NaOH/1000)*(system.volume_alcohol/alicuota)*(0.753-0.110)
 
         # Mi valor 
         zero_value = values[0] - eq_butanol + eq_PTSA  # Valor inicial de equivalentes a 0 minutos
