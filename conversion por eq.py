@@ -405,15 +405,15 @@ class System:
 
 #------------------------------------------------------------------------------
 
-mixture_density = np.array([0.78,0.80])
+mixture_density = np.array([0.74,(0.74+0.79)/2,0.79,0.79])
 
 alcohol= Butanol(mass=40.27*0.994)  # Masa de Butanol en gramos
 acid = OctanoicAcid(mass=79.46*0.98)  # Masa de Ácido octanoico en gramos
 cat = PTSA·H2O(mass=6.51)  # Masa de PTSA·H2O en gramos (no se usa en este cálculo)
 
-temperatures = np.array([25,60,70,80])  # Temperaturas en ºC
+temperatures = np.array([80,70,60,60,25])  # Temperaturas en ºC
 
-system = System(alcohol, acid, cat, temperature=60, volume=None)  # Crear el sistema de reacción a 60ºC
+system = System(alcohol, acid, cat, temperature=25, volume=None)  # Crear el sistema de reacción a 60ºC
 
 # Calcular el volumen maximo y minimo por la densidad
 total_mass = alcohol.mass + acid.mass + cat.mass  # Masa total de la mezcla
@@ -458,8 +458,8 @@ for temperature in temperatures:
     print(f"Volumen de Butanol: {butanol_volume:.2f} ml")
     print(f"Volumen de Ácido Octanoico: {acid_volume:.2f} ml")
     print(f"Volumen aditivo total de la mezcla: {acid_volume+butanol_volume:.2f} ml")
-    print(f"Volumen máximo de la mezcla a 60ºC: {volume_max:.2f} ml")
-    print(f"Volumen mínimo de la mezcla a 60ºC: {volume_min:.2f} ml")
+    print(f"Volumen máximo de la mezcla: {volume_max:.2f} ml")
+    print(f"Volumen mínimo de la mezcla: {volume_min:.2f} ml")
     print("-" * 40)
 
 
@@ -474,29 +474,44 @@ plt.figure(figsize=(12, 6))
 
 for index,values in enumerate(tiritation):
     if index in [0,1,3]:
-        # Expand each value by adding one before (value - 0.03) and one after (value + 0.03)
+        
         expanded_values = []
+        # Expand each value by adding one before (value - 0.03) and one after (value + 0.03)
         for v in values:
             expanded_values.extend([v - 0.03, v, v + 0.03])
         values = np.array(expanded_values)
-        # Ajusto los valores de titulación a la concentración del NaOH como si fuera 0.1M
-        values = values / (0.089/0.1)
-        
         # Multiplico el volumen de titulación por la concentración del NaOH para obtener los equivalentes cada 100 microlitros.
-        #values = values * 0.1  # Ajustar a la concentración del NaOH (0.1M)
-        # Multiplico los equivalentes por 10 para obtener los equivalentes por ml
-        #values = values * 10  # Convertir a equivalentes por ml
+        values = values * 0.089 
+
+        values = values * 10  # Convertir a equivalentes por ml
+        
         # Multiplico por el volumen total
+        total_volume = system.total_mass / mixture_density[index] # Volumen total de la mezcla en ml a la temperatura dada
+        system = System(alcohol, acid, cat, temperature=temperatures[index], volume=total_volume)
+        # Ajustar al volumen total de la reacción para obtener los equivalentes totales del sistema
+        values = values * total_volume 
 
-        #values = values * total_volume  # Ajustar al volumen total de la reacción para obtener los equivalentes totales del sistema
+        
+        eq_butanol = 10*0.089*system.volume_alcohol*0.110
+        eq_PTSA = 10*0.089*system.volume_alcohol*(0.753-0.110)
 
-        zero_value = values[0] / (system.xacid_acid)
+        # Mi valor 
+        zero_value = values[0] - eq_butanol + eq_PTSA  # Valor inicial de equivalentes a 0 minutos
+
+        eq_octanoico =  zero_value + eq_PTSA
+
+
+
 
         values = (
-            zero_value - (values)) *100 / (zero_value * system.xacid_acid)
+            (zero_value) - (values - eq_butanol - eq_PTSA)) *100 / (eq_octanoico)  
 
 
+        
 
+        
+ 
+        
         
         time_real = time + time_error[index]
 
