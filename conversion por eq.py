@@ -1,16 +1,19 @@
+#Carga de las librerías necesarias
 import numpy as np
 import matplotlib.pyplot as plt
 from data import tiritation, time, time_error
 from classes import *
 #------------------------------------------------------------------------------
 
+# Datos experimentales
+temperatures = np.array([80,70,60,60,25])  # Temperaturas en ºC
 mixture_density = np.array([0.74,(0.74+0.79)/2,0.79,0.79])
 
 alcohol= Butanol(mass=40.27*0.994)  # Masa de Butanol en gramos
 acid = OctanoicAcid(mass=79.46*0.98)  # Masa de Ácido octanoico en gramos
 cat = PTSA·H2O(mass=6.51)  # Masa de PTSA·H2O en gramos (no se usa en este cálculo)
 
-temperatures = np.array([80,70,60,60,25])  # Temperaturas en ºC
+
 
 system = System(alcohol, acid, cat, temperature=25, volume=None)  # Crear el sistema de reacción a 60ºC
 
@@ -95,18 +98,21 @@ for index,values in enumerate(tiritation):
 
         
         eq_butanol = (NaOH/1000)*(system.volume_alcohol/alicuota)*0.110
-        eq_PTSA = (NaOH/1000)*(system.volume_alcohol/alicuota)*(0.753-0.110)
+        eq_PTSA_old = (NaOH/1000)*(system.volume_alcohol/alicuota)*(0.753-0.110)
+        eq_PTSA = (6.51/1.10)*(NaOH/1000)*((49.99/1.02)/1)*(1.15)
+        print(f"{system.catalyst.moles:.3f};{eq_PTSA:.3f};{eq_PTSA_old:.3f}")
 
         # Mi valor 
-        zero_value = values[0] - eq_butanol + eq_PTSA  # Valor inicial de equivalentes a 0 minutos
+        #zero_value = values[0] - eq_butanol + eq_PTSA  # Valor inicial de equivalentes a 0 minutos
+        zero_value = values[0]
 
-        eq_octanoico =  zero_value + eq_PTSA
+        eq_octanoico =  zero_value
 
 
 
 
         values = (
-            (zero_value) - (values - eq_butanol - eq_PTSA)) *100 / (eq_octanoico)  
+            (zero_value) - (values - eq_PTSA)) *100 / (eq_octanoico)  
 
 
         
@@ -124,8 +130,8 @@ for index,values in enumerate(tiritation):
 
 
         plt.boxplot(
-            grouped_values,
-            positions=time_real,
+            grouped_values[1:],
+            positions=time_real[1:],
             widths=10,
             showfliers=False,
             notch=False,
@@ -145,16 +151,17 @@ for index,values in enumerate(tiritation):
             #plt.scatter([t]*3, grouped_values[i], color='black', alpha=0.7)
 
         # Agregar una linea que conecte las medianas de cada grupo
-        if False:
-            medians = [np.median(group) for group in grouped_values]
+        if True:
+            medians = [np.median(group) for group in grouped_values[1:]]
             plt.plot(
-                time_real,
+                time_real[1:],
                 medians,
-                color='gray',
+                color=colors[index],
                 marker='o',
                 linestyle='dotted',
                 markersize=1,
-                label='Medianas')
+                #label='Medianas'
+                )
 
 
 # Ajustes finales

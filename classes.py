@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from data import tiritation, time, time_error
-# Datos proporcionados
-
 class Compound:
     def __init__(self, name, molar_mass, mass=0., moles=0.):
         """
