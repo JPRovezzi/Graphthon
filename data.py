@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 # Datos de tiempo
 time = np.array(
@@ -80,3 +81,19 @@ tiritation = [
         1.06,1.09,1.06,
     ]),
     ]
+
+    # Select the first titration array
+titration_80C = tiritation[0]
+
+# Ensure the lengths match for DataFrame creation
+min_length = min(len(time), len(titration_80C), len(time_error[0]))
+df = pd.DataFrame({
+    'time': time[:min_length],
+    "time unit": 'min',
+    'titration_80C': titration_80C[:min_length],
+    'unit': 'mL',
+    'time_offset': time_error[0][:min_length],
+    'time_offset unit': 'min'
+})
+
+print(df)
