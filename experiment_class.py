@@ -1,7 +1,11 @@
 import pandas as pd
 class experiment:
-    def __init__(self):
-        pass
+    def __init__(self, name=None,type= None,description=None, data: pd.DataFrame = None):
+        self.name = name
+        self.type = type
+        self.description = description
+        self.data = data if data is not None else pd.DataFrame()
+
 
 class Solution():
     """Solution class."""
@@ -12,7 +16,6 @@ class Solution():
         self.density_ref = None
         self.temperature_ref = (298.15,"K")
         self.pressure_ref = (1,"atm")
-
 
 class Titrant(Solution):
     """Titrant class."""
@@ -25,11 +28,10 @@ class Titration(experiment):
             self,
             titration_data: pd.DataFrame = None,
             ):
-        
         super().__init__()
-        self.name = None
+        self.name = name
         self.type = "Titration"
-        self.description = None
+        self.description = description
         self.titration_data = titration_data
         self.temperature = None
         self.titrant = None
