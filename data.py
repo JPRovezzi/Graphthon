@@ -3,9 +3,21 @@
 import numpy as np
 import pandas as pd
 
+#Import third party libraries
+from result_class import Result_Titration
+
 # Raw data for v_titrationexperiments at different temperatures
 # Each temperature has its own set of data, including time, time error, titration volumes, and temperature readings.
 # The data is structured in lists of numpy arrays for easy manipulation and analysis.
+
+# Description of the data:
+description = [
+    "Titration; 80ºC; Octanoic acid + Butanol + PTSA·H2O; 0.1 mL sample volume; Titration solution: 0.1 M NaOH",
+    "Titration; 70ºC; Octanoic acid + Butanol + PTSA·H2O; 0.1 mL sample volume; Titration solution: 0.1 M NaOH",
+    "Titration; 60ºC; Octanoic acid + Butanol + PTSA·H2O; 0.1 mL sample volume; Titration solution: 0.1 M NaOH; First run",
+    "Titration; 60ºC; Octanoic acid + Butanol + PTSA·H2O; 0.1 mL sample volume; Titration solution: 0.1 M NaOH; Second run",
+    "Titration; 60ºC; Octanoic acid + Butanol + PTSA·H2O + Toluene; 0.1 mL sample volume; Titration solution: 0.1 M NaOH; With Toluene addition",
+]
 
 
 # Time data for each temperature in minutes
@@ -307,78 +319,94 @@ density_raw = [
     np.array([]),
 
 ]
-for i,_ in enumerate(weight):
-    if len(weight[i]) != 0:
-        density_raw [i]=(weight[i][1]-weight[i][0]) / sample_volume[i]
+def get_results():
+    '''This function processes the raw data and returns a list of Result_Titration objects containing the processed data.'''
+    for i,_ in enumerate(weight):
+        if len(weight[i]) != 0:
+            density_raw [i]=(weight[i][1]-weight[i][0]) / sample_volume[i]
 
-# Calculate the mean density for each temperature from the raw data
-# The density is calculated as the difference between filled and empty weights divided by the volume (0.1 mL)
-density_mean = []
-for i,_ in enumerate(density_raw ):
-    density_mean.append([])
-    for j in range(0, len(density_raw [i]), 3):
-        if len(density_raw[i]) > 0:
-            density_mean[i].append(np.mean(density_raw[i][j:j+3]).round(3))
-        else:
-            density_mean.append(None)
-
-# Delete all zero values of density_mean
-density_reaction = [list(filter(lambda x: x != 0, d)) for d in density_mean]
-
-density_system = []
-for i,_ in enumerate(density_mean):
-    density_system.append([])
-    for j in range(0, len(density_mean[i])):
-        if len(density_mean[i]) > 0:
-            if j == 0:
-                density_system[i].append(density_reaction[i][0])
+    # Calculate the mean density for each temperature from the raw data
+    # The density is calculated as the difference between filled and empty weights divided by the volume (0.1 mL)
+    density_mean = []
+    for i,_ in enumerate(density_raw ):
+        density_mean.append([])
+        for j in range(0, len(density_raw [i]), 3):
+            if len(density_raw[i]) > 0:
+                density_mean[i].append(np.mean(density_raw[i][j:j+3]).round(3))
             else:
-                density_system[i].append(
-                    np.mean(density_reaction[i][1:]).round(3))
-        else:
-            density_system.append(None)
+                density_mean.append(None)
 
-# I want the density at 60ºC #1 to be the same as the density at 60ºC #2
-if len(density_system[3]) > 0:
-    minimum_length = min(len(time[2]), len(time[3]))
-    density_system[2] = np.zeros(minimum_length)
-    for j in range(minimum_length):
-        density_system[2][j] = (density_system[3][j])
+    # Delete all zero values of density_mean
+    density_reaction = [list(filter(lambda x: x != 0, d)) for d in density_mean]
+
+    density_system = []
+    for i,_ in enumerate(density_mean):
+        density_system.append([])
+        for j in range(0, len(density_mean[i])):
+            if len(density_mean[i]) > 0:
+                if j == 0:
+                    density_system[i].append(density_reaction[i][0])
+                else:
+                    density_system[i].append(
+                        np.mean(density_reaction[i][1:]).round(3))
+            else:
+                density_system.append(None)
+
+    # I want the density at 60ºC #1 to be the same as the density at 60ºC #2
+    if len(density_system[3]) > 0:
+        minimum_length = min(len(time[2]), len(time[3]))
+        density_system[2] = np.zeros(minimum_length)
+        for j in range(minimum_length):
+            density_system[2][j] = (density_system[3][j])
 
 
-# I want the density at 70ºC to be the mean of the densities at 80ºC and 60ºC #2
-if len(density_system[0]) > 0 and len(density_system[3]) > 0:
-    minimum_length = min(len(density_system[0]), len(density_system[3]))
-    density_system[1] = np.zeros(minimum_length)
-    for j in range(minimum_length):
-        density_system[1][j] = ((density_system[0][j] + density_system[3][j]) / 2).round(3)
+    # I want the density at 70ºC to be the mean of the densities at 80ºC and 60ºC #2
+    if len(density_system[0]) > 0 and len(density_system[3]) > 0:
+        minimum_length = min(len(density_system[0]), len(density_system[3]))
+        density_system[1] = np.zeros(minimum_length)
+        for j in range(minimum_length):
+            density_system[1][j] = ((density_system[0][j] + density_system[3][j]) / 2).round(3)
 
+    titration_results = []
 
-for i,_ in enumerate(v_titration):
-    titration_vol = [[],[],[],]
-    for j in range(0,len(v_titration[i]),3):
-        titration_vol[0].append(v_titration[i][j])
-        titration_vol[1].append(v_titration[i][j+1])
-        titration_vol[2].append(v_titration[i][j+2])
-    # Convert lists to numpy arrays for consistency
-    titration_vol = [np.array(vol) for vol in titration_vol]
-    # Ensure the lengths match for DataFrame creation
-    df = pd.DataFrame({
-        '#': np.arange(1, len(titration_vol[0]) + 1),
-        't': time[i],
-        't (offset)': time_error[i],
-        'T': temperature[i],
-        'T (unit)': 'ºC',
-        't (unit)': 'min',
-        'vt_01': titration_vol[0].round(2),
-        'vt_02': titration_vol[1].round(2),
-        'vt_03': titration_vol[2].round(2),
-        'vt (unit)': 'mL',
-        'd': density_system[i] if len(density_system[i]) > 0 else None,
-        'd (unit)': 'g/mL',
+    for i,_ in enumerate(v_titration):
+        titration_vol = [[],[],[],]
+        for j in range(0,len(v_titration[i]),3):
+            titration_vol[0].append(v_titration[i][j])
+            titration_vol[1].append(v_titration[i][j+1])
+            titration_vol[2].append(v_titration[i][j+2])
+        # Convert lists to numpy arrays for consistency
+        titration_vol = [np.array(vol) for vol in titration_vol]
+        # Ensure the lengths match for DataFrame creation
+        df = pd.DataFrame({
+            '#': np.arange(1, len(titration_vol[0]) + 1),
+            't': time[i],
+            't (offset)': time_error[i],
+            'T': temperature[i],
+            'T (unit)': 'ºC',
+            't (unit)': 'min',
+            'vt_01': titration_vol[0].round(2),
+            'vt_02': titration_vol[1].round(2),
+            'vt_03': titration_vol[2].round(2),
+            'vt (unit)': 'mL',
+            'd': density_system[i] if len(density_system[i]) > 0 else None,
+            'd (unit)': 'g/mL',
 
-    })
-    df['vt_median'] = np.median([df['vt_01'], df['vt_02'], df['vt_03']], axis=0).round(3)
-    df['vt_mean'] = np.mean([df['vt_01'], df['vt_02'], df['vt_03']], axis=0).round(3)
-    df['vt_stderr'] = (np.std([df['vt_01'], df['vt_02'], df['vt_03']], axis=0, ddof=1) / np.sqrt(3)).round(3)
-    print(df)
+        })
+        df['vt_median'] = np.median([df['vt_01'], df['vt_02'], df['vt_03']], axis=0).round(3)
+        df['vt_mean'] = np.mean([df['vt_01'], df['vt_02'], df['vt_03']], axis=0).round(3)
+        df['vt_stderr'] = (np.std([df['vt_01'], df['vt_02'], df['vt_03']], axis=0, ddof=1) / np.sqrt(3)).round(3)
+        result_titration = Result_Titration(
+            name=f"Titration Result {i + 1}",
+            description=description[i],
+            data=df
+        )
+        titration_results.append(result_titration)
+        return titration_results
+
+if __name__ == "__main__":
+    for result in get_results():
+        print(result.get_name())
+        print(result.get_description())
+        print(result.get_data())
+        print("\n")
