@@ -12,12 +12,58 @@ from result_class import Result_Titration
 
 # Description of the data:
 description = [
-    "Titration; 80ºC; Octanoic acid + Butanol + PTSA·H2O; 0.1 mL sample volume; Titration solution: 0.1 M NaOH",
-    "Titration; 70ºC; Octanoic acid + Butanol + PTSA·H2O; 0.1 mL sample volume; Titration solution: 0.1 M NaOH",
-    "Titration; 60ºC; Octanoic acid + Butanol + PTSA·H2O; 0.1 mL sample volume; Titration solution: 0.1 M NaOH; First run",
-    "Titration; 60ºC; Octanoic acid + Butanol + PTSA·H2O; 0.1 mL sample volume; Titration solution: 0.1 M NaOH; Second run",
-    "Titration; 60ºC; Octanoic acid + Butanol + PTSA·H2O + Toluene; 0.1 mL sample volume; Titration solution: 0.1 M NaOH; With Toluene addition",
+    {
+        "type": "Titration",
+        "temperature": "80",
+        "temperature_unit": "ºC",
+        "components": ["Octanoic acid", "Butanol", "PTSA·H2O"],
+        "sample_volume": "0.1 mL",
+        "titrant": "NaOH",
+        "titrant_concentration": "0.1 M",
+        "note": ""
+    },
+    {
+        "type": "Titration",
+        "temperature": "70",
+        "temperature_unit": "ºC",
+        "components": ["Octanoic acid", "Butanol", "PTSA·H2O"],
+        "sample_volume": "0.1 mL",
+        "titrant": "NaOH",
+        "titrant_concentration": "0.1 M",
+        "note": ""
+    },
+    {
+        "type": "Titration",
+        "temperature": "60",
+        "temperature_unit": "ºC",
+        "components": ["Octanoic acid", "Butanol", "PTSA·H2O"],
+        "sample_volume": "0.1 mL",
+        "titrant": "NaOH",
+        "titrant_concentration": "0.1 M",
+        "note": "First run",
+    },
+    {
+        "type": "Titration",
+        "temperature": "60",
+        "temperature_unit": "ºC",
+        "components": ["Octanoic acid", "Butanol", "PTSA·H2O"],
+        "sample_volume": "0.1 mL",
+        "titrant": "NaOH",
+        "titrant_concentration": "0.1 M",
+        "note": "Second run",
+    },
+    {
+        "type": "Titration",
+        "temperature": "60",
+        "temperature_unit": "ºC",
+        "components": ["Octanoic acid", "Butanol", "PTSA·H2O", "Toluene"],
+        "sample_volume": "0.1 mL",
+        "titrant": "NaOH",
+        "titrant_concentration": "0.1 M",
+        "note": "With Toluene addition",
+    },
 ]
+# 
 
 
 # Time data for each temperature in minutes

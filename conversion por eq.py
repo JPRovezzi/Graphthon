@@ -24,11 +24,12 @@ plt.figure(figsize=(12, 6))
 
 for index,values in enumerate(titration_results):
     if index in [0,1,3]:
-        system = System(alcohol, acid, cat, temperature=temperatures[index], volume=total_volume)
+
         expanded_values = []
+        
         NaOH = 0.1
         
-        alicuota=0.1
+        alicuota = 0.1
 
         # Expand each value by adding one before (value - 0.03) and one after (value + 0.03)
         for v in values:
@@ -40,12 +41,13 @@ for index,values in enumerate(titration_results):
         values = values / alicuota    # Convertir a equivalentes por ml
         
         # Multiplico por el volumen total
-        total_volume = system.total_mass / mixture_density[index] # Volumen total de la mezcla en ml a la temperatura dada
-        system = System(alcohol, acid, cat, temperature=temperatures[index], volume=total_volume)
-        # Ajustar al volumen total de la reacción para obtener los equivalentes totales del sistema
-        values = values * total_volume 
+        system = System(alcohol, acid, cat, temperature=titration_results[index].description["temperature"])
+        mixture_density = titration_results[index].data["density"][1]
+        total_volume = system.total_mass / mixture_density # Volumen total de la mezcla en ml a la temperatura dada
 
-        
+        # Ajustar al volumen total de la reacción para obtener los equivalentes totales del sistema
+        values = values * total_volume
+
         eq_butanol = (NaOH/1000)*(system.volume_alcohol/alicuota)*0.110
         eq_PTSA_old = (NaOH/1000)*(system.volume_alcohol/alicuota)*(0.753-0.110)
         eq_PTSA = (6.51/1.10)*(NaOH/1000)*((49.99/1.02)/1)*(1.15)
