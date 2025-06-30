@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from unit_handler import temperature_conversion
-from data import tiritation, time, time_error
+from data import time, time_error
 class Compound:
     def __init__(self, name, molar_mass, mass=0., moles=0.):
         """
