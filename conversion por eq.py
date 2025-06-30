@@ -42,7 +42,7 @@ if True:
 
 
 
-            values = titration_results[index].data['vt_mean'][1:]
+            values = titration_results[index].data['vt_median'][1:]
             # Multiplico el volumen de titulación por la concentración del NaOH para obtener los equivalentes cada 100 microlitros.
             values = values * (NaOH/1000) 
 
@@ -73,7 +73,7 @@ if True:
             plt.plot(time_real, conversion, label=labels[index], color=colors[index], markersize=3, marker='o')
             plt.xlabel('Tiempo (minutos)')
             plt.ylabel('Conversión (%)')
-            plt.title('Conversión de Ácido Octanoico a Butanol')
+            plt.title('Conversión de Ácido Octanoico a Octanoato de Butilo')
             plt.xticks(np.arange(0, time_max + 1, 30))
             plt.yticks(np.arange(0, 101, 5))
             plt.xlim(0, time_max+30)
@@ -146,7 +146,7 @@ for index, exp in enumerate(titration_results):
 
 plt.xlabel('Tiempo (minutos)')
 plt.ylabel('Conversión (%)')
-plt.title('Conversión de Ácido Octanoico a Butanol')
+plt.title('Conversión de Ácido Octanoico a Octanoato de Butilo')
 plt.xticks(np.arange(0, int(time_max+30), 30),np.arange(0, int(time_max+30), 30))
 plt.yticks(np.arange(0, 101, 5))
 plt.xlim(0, int(time_max+30))
@@ -171,7 +171,7 @@ for index, df in enumerate(titration_results):
         eq_butanol = (NaOH/1000)*(alcohol.density(temperature) * alcohol.mass /alicuota)*0.110
         eq_PTSA = (6.51/1.10)*(NaOH/1000)*((49.99/1.02)/1)*(1.15)
 
-        values = titration_results[index].data['vt_mean'][1:]
+        values = titration_results[index].data['vt_median'][1:]
         values = values * (NaOH/1000) 
         values = values / alicuota    
         values = values * total_volume
@@ -224,7 +224,7 @@ for index, exp in enumerate(titration_results):
         flierprops=dict(marker='o', color=colors[index], markersize=5, linestyle='none'))
 plt.xlabel('Tiempo (minutos)')
 plt.ylabel('Conversión (%)')
-plt.title('Conversión de Ácido Octanoico a Butanol')
+plt.title('Conversión de Ácido Octanoico a Octanoato de Butilo')
 plt.xticks(np.arange(0, int(time_max+30), 30), np.arange(0, int(time_max+30), 30))
 plt.yticks(np.arange(0, 101, 5))
 plt.xlim(0, int(time_max+30))
